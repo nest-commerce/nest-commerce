@@ -6,7 +6,13 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "migrate:dev": "npx apps/api/src/prisma migrate dev",
+    "migrate:dev:create": "npx apps/api/src/prisma migrate dev --create-only",
+    "migrate:deploy": "npx apps/api/src/prisma migrate deploy",
+    "prisma:generate": "npx apps/api/src/prisma generate",
+    "prisma:studio": "npx apps/api/src/prisma studio",
+    "prisma:seed": "npx apps/api/src/prisma db seed"
   },
   "private": true,
   "overrides": {
@@ -16,7 +22,9 @@
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
+    "@prisma/client": "latest",
     "core-js": "^3.6.5",
+    "nestjs-prisma": "^0.16.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "reflect-metadata": "^0.1.13",
@@ -59,6 +67,7 @@
     "lint-staged": "^13.0.1",
     "nx": "14.2.2",
     "prettier": "^2.6.2",
+    "prisma": "latest",
     "react-test-renderer": "18.1.0",
     "ts-jest": "27.1.4",
     "ts-node": "~10.8.0",
@@ -69,5 +78,8 @@
       "prettier --write",
       "eslint --fix"
     ]
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
