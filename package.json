@@ -7,13 +7,7 @@
     "build": "nx build",
     "build:prod": "nx run-many --target=build --all",
     "test": "nx test",
-    "prepare": "husky install",
-    "migrate:dev": "npx apps/api/src/prisma migrate dev",
-    "migrate:dev:create": "npx apps/api/src/prisma migrate dev --create-only",
-    "migrate:deploy": "npx apps/api/src/prisma migrate deploy",
-    "prisma:generate": "npx apps/api/src/prisma generate",
-    "prisma:studio": "npx apps/api/src/prisma studio",
-    "prisma:seed": "npx apps/api/src/prisma db seed"
+    "prepare": "husky install"
   },
   "private": true,
   "overrides": {
