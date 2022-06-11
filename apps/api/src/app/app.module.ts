@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { resolve } from 'path';
+import { PrismaModule } from 'nestjs-prisma';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { resolve } from 'path';
       rootPath: resolve(process.env.SERVE_STATIC_ROOT_PATH),
       exclude: ['/api*'],
     }),
+    PrismaModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
