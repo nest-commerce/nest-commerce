@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
+    "build:prod": "nx run-many --target=build --all",
     "test": "nx test",
     "prepare": "husky install",
     "migrate:dev": "npx apps/api/src/prisma migrate dev",
