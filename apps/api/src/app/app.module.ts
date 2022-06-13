@@ -5,25 +5,26 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { resolve } from 'path';
 import { PrismaModule } from 'nestjs-prisma';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GLOBAL_PREFIX } from '../main';
+import { API_GLOBAL_PREFIX } from '../main';
 
 const STATIC_ROOT_PATH_KEY = 'SERVE_STATIC_ROOT_PATH';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot(),
     ServeStaticModule.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => [
         {
           rootPath: resolve(
             configService.getOrThrow<string>(STATIC_ROOT_PATH_KEY)
           ),
-          exclude: [`/${GLOBAL_PREFIX}*`],
+          exclude: [`/${API_GLOBAL_PREFIX}*`],
         },
       ],
     }),
-    PrismaModule.forRoot({ isGlobal: true }),
+    PrismaModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
