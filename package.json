@@ -19,6 +19,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/serve-static": "^2.2.2",
+    "@nestjs/swagger": "^5.2.1",
     "@prisma/client": "latest",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
@@ -30,6 +31,7 @@
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "0.13.7",
     "rxjs": "^7.0.0",
+    "swagger-ui-express": "^4.4.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
