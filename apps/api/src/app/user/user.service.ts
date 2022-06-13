@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateUserDto, FindUserDto, UserDto } from '@nest-commerce/data';
 import { PasswordService } from '../auth/password/password.service';
+
 const ERRORS_USER_ALREADY_EXIST = 'User already exists.';
 
 @Injectable()
@@ -19,8 +20,8 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<UserDto> {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: createUserDto.username },
+    const existingUser = await this.findUser({
+      username: createUserDto.username,
     });
     if (existingUser) {
       throw new ConflictException(ERRORS_USER_ALREADY_EXIST);
@@ -32,5 +33,16 @@ export class UserService {
       },
     });
     return new UserDto(user);
+  }
+
+  async validateUser(
+    username: string,
+    password: string
+  ): Promise<UserDto | null> {
+    const user = await this.findUser({ username });
+    if (user && (await this.passwordService.compare(password, user.password))) {
+      return user;
+    }
+    return null;
   }
 }

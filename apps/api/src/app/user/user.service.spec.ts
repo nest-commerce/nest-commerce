@@ -72,4 +72,36 @@ describe('UserService', () => {
       }).rejects.toThrow(ConflictException);
     });
   });
+
+  describe('validateUser', () => {
+    let hashedUser;
+
+    beforeAll(async () => {
+      hashedUser = {
+        ...validUser,
+        password: await passwordService.hash(validUser.password),
+      };
+    });
+
+    it('should return user if password matches', async () => {
+      prismaService.user.findUnique = jest.fn().mockResolvedValue(hashedUser);
+      expect(
+        await userService.validateUser(validUser.username, validUser.password)
+      ).toEqual(hashedUser);
+    });
+
+    it('should return null if user not found', async () => {
+      prismaService.user.findUnique = jest.fn().mockResolvedValue(null);
+      expect(
+        await userService.validateUser(validUser.username, validUser.password)
+      ).toEqual(null);
+    });
+
+    it('should return null if password is incorrect', async () => {
+      prismaService.user.findUnique = jest.fn().mockResolvedValue(hashedUser);
+      expect(
+        await userService.validateUser(validUser.username, 'incorrectPassword')
+      ).toEqual(null);
+    });
+  });
 });
