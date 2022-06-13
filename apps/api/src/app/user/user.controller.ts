@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, FindUserDto, UserDto } from '@nest-commerce/data';
 import {
@@ -6,6 +6,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
+import { JwtGuard } from '../auth/jwt/jwt.guard';
 
 @Controller('user')
 export class UserController {
@@ -14,6 +15,7 @@ export class UserController {
   @ApiOkResponse({
     type: UserDto,
   })
+  @UseGuards(JwtGuard)
   @Get()
   async findUser(@Query() param: FindUserDto): Promise<UserDto | null> {
     return this.userService.findUser(param);
