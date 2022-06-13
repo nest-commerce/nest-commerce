@@ -33,6 +33,7 @@ async function initGlobalConfigs(app: INestApplication) {
       transformOptions: { enableImplicitConversion: true },
     })
   );
+  // TODO: Add excludeExtraneousValues after https://github.com/typestack/class-transformer/issues/740 is fixed
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 }
 
