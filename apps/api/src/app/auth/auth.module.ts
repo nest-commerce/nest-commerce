@@ -9,6 +9,7 @@ import {
   JWT_SECRET_KEY,
   JwtStrategy,
 } from './jwt/jwt.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import {
     ConfigModule,
   ],
   providers: [PasswordService, AuthService, JwtStrategy],
+  controllers: [AuthController],
   exports: [PasswordService],
 })
 export class AuthModule {}
