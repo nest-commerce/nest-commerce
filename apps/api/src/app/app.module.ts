@@ -6,6 +6,7 @@ import { resolve } from 'path';
 import { PrismaModule } from 'nestjs-prisma';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { API_GLOBAL_PREFIX } from '../main';
+import { UserModule } from './user/user.module';
 
 const STATIC_ROOT_PATH_KEY = 'SERVE_STATIC_ROOT_PATH';
 
@@ -25,6 +26,7 @@ const STATIC_ROOT_PATH_KEY = 'SERVE_STATIC_ROOT_PATH';
       ],
     }),
     PrismaModule.forRoot(),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
