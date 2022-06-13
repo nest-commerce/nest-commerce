@@ -18,6 +18,8 @@ Open source headless ecommerce platform based on NestJS
 * Execute `npx nx serve admin-ui` to serve admin-ui
 
 ## Tech Stack
+* [Nx](https://nx.dev/)
+
 ### Backend
 * [NestJS](https://docs.nestjs.com/)
 * [Prisma](https://www.prisma.io/)
