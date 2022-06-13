@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsJWT, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthResultDto {
-  @IsString()
+  @IsJWT()
   @IsNotEmpty()
   @ApiProperty()
   accessToken: string;
