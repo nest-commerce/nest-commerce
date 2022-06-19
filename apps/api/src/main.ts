@@ -15,6 +15,7 @@ import { AppModule } from './app/app.module';
 import { PrismaService } from 'nestjs-prisma';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 const PATH_KEY = 'PORT';
 export const API_GLOBAL_PREFIX = 'api';
@@ -56,7 +57,8 @@ async function startApp(app: INestApplication) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
+  app.use(helmet());
 
   await Promise.all([
     initPrisma(app),
