@@ -17,7 +17,8 @@
     "paths": {
       "@nest-commerce/data": ["libs/data/src/index.ts"],
       "@nest-commerce/ui": ["libs/ui/src/index.ts"]
-    }
+    },
+    "strictPropertyInitialization": false
   },
   "exclude": ["node_modules", "tmp"]
 }
