@@ -1,9 +1,8 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '../nest-decorators';
 
 export class CredentialsDto {
   @IsEmail()
-  @IsNotEmpty()
   @ApiProperty({
     format: 'email',
   })

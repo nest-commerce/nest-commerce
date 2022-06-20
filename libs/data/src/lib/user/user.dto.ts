@@ -8,11 +8,10 @@ import {
 } from 'class-validator';
 import { Role, User } from '@prisma/client';
 import { Exclude } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '../nest-decorators';
 
 export class UserDto implements User {
   @IsInt()
-  @IsNotEmpty()
   @ApiProperty({
     format: 'id',
   })
@@ -33,7 +32,6 @@ export class UserDto implements User {
   lastName: string;
 
   @IsEmail()
-  @IsNotEmpty()
   @ApiProperty({
     format: 'email',
   })
@@ -44,21 +42,18 @@ export class UserDto implements User {
   password: string;
 
   @IsEnum(Role)
-  @IsNotEmpty()
   @ApiProperty({
     enum: Role,
   })
   role: Role;
 
   @IsDate()
-  @IsNotEmpty()
   @ApiProperty({
     format: 'date-time',
   })
   createdAt: Date;
 
   @IsDate()
-  @IsNotEmpty()
   @ApiProperty({
     format: 'date-time',
   })

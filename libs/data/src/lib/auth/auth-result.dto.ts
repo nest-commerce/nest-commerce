@@ -1,9 +1,15 @@
-import { IsJWT, IsNotEmpty } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsJWT } from 'class-validator';
+import { ApiProperty } from '../nest-decorators';
+import { Role } from '@prisma/client';
 
 export class AuthResultDto {
   @IsJWT()
-  @IsNotEmpty()
   @ApiProperty()
   accessToken: string;
+
+  @IsEnum(Role)
+  @ApiProperty({
+    enum: Role,
+  })
+  role: string;
 }

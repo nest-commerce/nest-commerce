@@ -1,5 +1,5 @@
 import { IsInt, IsEmail, ValidateIf } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '../nest-decorators';
 
 export class FindUserDto {
   @IsInt()
