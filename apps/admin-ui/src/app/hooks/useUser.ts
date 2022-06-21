@@ -1,9 +1,11 @@
 import { AuthResultDto } from '@nest-commerce/data';
-import useLocalStorage from './useLocalStorage';
+import { useLocalStorage } from '@mantine/hooks';
 
 const useUser = () => {
-  const { value: user, setValue: setUser } =
-    useLocalStorage<AuthResultDto>('user');
+  const [user, setUser] = useLocalStorage<AuthResultDto | null>({
+    key: 'user',
+    defaultValue: null,
+  });
 
   return {
     user,

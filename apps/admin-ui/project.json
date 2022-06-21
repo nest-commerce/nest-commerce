@@ -25,7 +25,13 @@
           "extractLicenses": false,
           "optimization": false,
           "sourceMap": true,
-          "vendorChunk": true
+          "vendorChunk": true,
+          "fileReplacements": [
+            {
+              "replace": "libs/data/src/lib/nest-decorators.ts",
+              "with": "libs/data/src/lib/react-decorators.ts"
+            }
+          ]
         },
         "production": {
           "optimization": true,
@@ -33,7 +39,13 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "fileReplacements": [
+            {
+              "replace": "libs/data/src/lib/nest-decorators.ts",
+              "with": "libs/data/src/lib/react-decorators.ts"
+            }
+          ]
         }
       }
     },
@@ -47,7 +59,13 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "admin-ui:build:development"
+          "buildTarget": "admin-ui:build:development",
+          "fileReplacements": [
+            {
+              "replace": "libs/data/src/lib/nest-decorators.ts",
+              "with": "libs/data/src/lib/react-decorators.ts"
+            }
+          ]
         },
         "production": {
           "buildTarget": "admin-ui:build:production",

@@ -1,5 +1,5 @@
 export enum Route {
   ADMIN = 'admin',
-  LOGIN = 'login',
-  DASHBOARD = 'dashboard',
+  LOGIN = '/admin/login',
+  Users = '/admin/users',
 }

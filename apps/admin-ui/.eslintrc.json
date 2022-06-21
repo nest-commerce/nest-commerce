@@ -1,6 +1,7 @@
 {
-  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json", "plugin:tailwindcss/recommended"],
+  "ignorePatterns": ["!**/*", "**/*.scss"],
+  "plugins": ["tailwindcss"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

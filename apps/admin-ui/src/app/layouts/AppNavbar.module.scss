@@ -1,0 +1,13 @@
+.main-link {
+  @apply flex h-11 w-11 items-center justify-center rounded-md
+    hover:brightness-200 hover:backdrop-brightness-200;
+}
+
+.sub-link {
+  @apply block h-11 w-full rounded-r-md px-3 font-medium leading-10 no-underline
+    hover:brightness-200 hover:backdrop-brightness-200;
+}
+
+.active {
+  @apply bg-slate-800 text-sky-500;
+}
