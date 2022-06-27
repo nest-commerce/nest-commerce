@@ -35,7 +35,7 @@ describe('PasswordService', () => {
       [numberSalt, Number(numberSalt)],
       [stringSalt, stringSalt],
     ])('should parse valid salt %i', async (salt, expected) => {
-      configService.getOrThrow.mockReturnValue(salt);
+      configService.getOrThrow.mockReturnValueOnce(salt);
       await initModule();
       await passwordService.hash(password);
       expect(hash).toBeCalledWith(password, expected);
@@ -43,7 +43,7 @@ describe('PasswordService', () => {
 
     it('should throw on invalid numeric salt', async () => {
       const invalidSalt = '-1';
-      configService.getOrThrow.mockReturnValue(invalidSalt);
+      configService.getOrThrow.mockReturnValueOnce(invalidSalt);
       await expect(async () => {
         await initModule();
       }).rejects.toThrow(Error);

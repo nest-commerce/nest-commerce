@@ -1,12 +1,32 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, FindUserDto, UserDto } from '@nest-commerce/data';
+import {
+  CreateUserDto,
+  FindUserDto,
+  FindUsersResponseDto,
+  UpdateUserDto,
+  UserDto,
+} from '@nest-commerce/data';
 import {
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/jwt/jwt.guard';
+import { FindUsersDto } from '@nest-commerce/data';
+import { PermissionsGuard } from '../auth/permissions/permissions.guard';
+import { Permissions } from '../auth/permissions/permissions.decorator';
+import { DeleteUserDto } from '@nest-commerce/data';
 
 @Controller('user')
 export class UserController {
@@ -15,10 +35,26 @@ export class UserController {
   @ApiOkResponse({
     type: UserDto,
   })
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, PermissionsGuard)
+  @Permissions((user, { query }) =>
+    query.id
+      ? user.id.toString() === query.id
+      : user.username === query.username
+  )
   @Get()
-  async findUser(@Query() param: FindUserDto): Promise<UserDto | null> {
-    return this.userService.findUser(param);
+  async findUser(@Query() findUserDto: FindUserDto): Promise<UserDto | null> {
+    return this.userService.findUser(findUserDto);
+  }
+
+  @ApiOkResponse({
+    type: FindUsersResponseDto,
+  })
+  @UseGuards(JwtGuard, PermissionsGuard)
+  @Get('find')
+  async findUsers(
+    @Query() findUsersDto: FindUsersDto
+  ): Promise<FindUsersResponseDto> {
+    return this.userService.findUsers(findUsersDto);
   }
 
   @ApiCreatedResponse({
@@ -26,7 +62,31 @@ export class UserController {
   })
   @ApiConflictResponse()
   @Post('create')
-  async createUser(@Body() body: CreateUserDto): Promise<UserDto> {
-    return this.userService.createUser(body);
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
+    return this.userService.createUser(createUserDto);
+  }
+
+  @ApiCreatedResponse({
+    type: UserDto,
+  })
+  @ApiNotFoundResponse()
+  @UseGuards(JwtGuard, PermissionsGuard)
+  @Permissions((user, { params }) => user.id.toString() === params.id)
+  @Post('update/:id')
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<UserDto> {
+    return this.userService.updateUser(id, updateUserDto);
+  }
+
+  @ApiOkResponse({
+    type: UserDto,
+  })
+  @ApiNotFoundResponse()
+  @UseGuards(JwtGuard, PermissionsGuard)
+  @Post('delete')
+  async deleteUser(@Body() deleteUserDto: DeleteUserDto): Promise<UserDto> {
+    return this.userService.deleteUser(deleteUserDto);
   }
 }

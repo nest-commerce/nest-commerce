@@ -34,7 +34,7 @@ describe('AuthController', () => {
 
     it('should return auth result on valid credentials', async () => {
       const expected = { accessToken: 'token' };
-      authService.login.mockResolvedValue(expected);
+      authService.login.mockResolvedValueOnce(expected);
       expect(await authController.login(credentials)).toEqual(expected);
     });
 

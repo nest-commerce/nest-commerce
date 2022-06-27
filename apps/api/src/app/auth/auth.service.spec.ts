@@ -46,13 +46,13 @@ describe('AuthService', () => {
     };
 
     it('should return auth result on valid credentials', async () => {
-      userService.validateUser.mockResolvedValue(validUser);
+      userService.validateUser.mockResolvedValueOnce(validUser);
       const result = await authService.login(credentials);
       expect(isJWT(result.accessToken)).toBe(true);
     });
 
     it('should throw UnauthorizedException on invalid credentials', async () => {
-      userService.validateUser.mockResolvedValue(null);
+      userService.validateUser.mockResolvedValueOnce(null);
       await expect(
         async () => await authService.login(credentials)
       ).rejects.toThrow(UnauthorizedException);

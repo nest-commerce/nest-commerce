@@ -4,7 +4,11 @@ import { User, Role } from '@prisma/client';
 import { UserDto } from '@nest-commerce/data';
 import { PasswordService } from '../auth/password/password.service';
 import { PrismaService } from 'nestjs-prisma';
-import { ConflictException } from '@nestjs/common';
+import {
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserModule } from './user.module';
 
 describe('UserService', () => {
@@ -40,7 +44,9 @@ describe('UserService', () => {
   describe('findUser', () => {
     const validSearch = { id: 0 };
     it('should return user as UserDto', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(validUser);
+      prismaService.user.findUnique = jest
+        .fn()
+        .mockResolvedValueOnce(validUser);
       const returnedUser = await userService.findUser(validSearch);
       expect(returnedUser).not.toBeNull();
       expect(returnedUser).toBeInstanceOf(UserDto);
@@ -48,8 +54,31 @@ describe('UserService', () => {
     });
 
     it('should return null if no user is found', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(null);
+      prismaService.user.findUnique = jest.fn().mockResolvedValueOnce(null);
       expect(await userService.findUser(validSearch)).toBeNull();
+    });
+  });
+
+  describe('findUsers', () => {
+    it('should return users as UserDto instances and total count', async () => {
+      const expectedCount = 1;
+      prismaService.user.findMany = jest
+        .fn()
+        .mockResolvedValueOnce([validUser]);
+      prismaService.user.count = jest.fn().mockResolvedValueOnce(expectedCount);
+      const result = await userService.findUsers({ page: 1, pageSize: 1 });
+      expect(result.count).toBe(expectedCount);
+      expect(result.users[0]).toBeInstanceOf(UserDto);
+      expect(result.users[0]).toEqual(validUser);
+    });
+
+    it('should return empty array if no users are found', async () => {
+      const expectedCount = 0;
+      prismaService.user.findMany = jest.fn().mockResolvedValueOnce([]);
+      prismaService.user.count = jest.fn().mockResolvedValueOnce(expectedCount);
+      const result = await userService.findUsers({ page: 1, pageSize: 1 });
+      expect(result.count).toBe(expectedCount);
+      expect(result.users.length).toBe(0);
     });
   });
 
@@ -64,12 +93,23 @@ describe('UserService', () => {
         await passwordService.compare(validUser.password, createdUser.password)
       ).toBe(true);
     });
+  });
 
-    it('should throw error when there is an existing user with same username', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(validUser);
-      await expect(async () => {
-        await userService.createUser(validUser);
-      }).rejects.toThrow(ConflictException);
+  describe('updateUser', () => {
+    it('should return user as UserDto after successful update', async () => {
+      prismaService.user.update = jest.fn().mockResolvedValueOnce(validUser);
+      const res = await userService.updateUser(1, {});
+      expect(res).toEqual(validUser);
+      expect(res).toBeInstanceOf(UserDto);
+    });
+  });
+
+  describe('deleteUser', () => {
+    it('should return user as UserDto after successful deletion', async () => {
+      prismaService.user.delete = jest.fn().mockResolvedValueOnce(validUser);
+      const res = await userService.deleteUser({});
+      expect(res).toEqual(validUser);
+      expect(res).toBeInstanceOf(UserDto);
     });
   });
 
@@ -84,21 +124,25 @@ describe('UserService', () => {
     });
 
     it('should return user if password matches', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(hashedUser);
+      prismaService.user.findUnique = jest
+        .fn()
+        .mockResolvedValueOnce(hashedUser);
       expect(
         await userService.validateUser(validUser.username, validUser.password)
       ).toEqual(hashedUser);
     });
 
     it('should return null if user not found', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(null);
+      prismaService.user.findUnique = jest.fn().mockResolvedValueOnce(null);
       expect(
         await userService.validateUser(validUser.username, validUser.password)
       ).toEqual(null);
     });
 
     it('should return null if password is incorrect', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(hashedUser);
+      prismaService.user.findUnique = jest
+        .fn()
+        .mockResolvedValueOnce(hashedUser);
       expect(
         await userService.validateUser(validUser.username, 'incorrectPassword')
       ).toEqual(null);

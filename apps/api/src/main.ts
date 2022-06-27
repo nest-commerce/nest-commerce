@@ -16,6 +16,8 @@ import { PrismaService } from 'nestjs-prisma';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import * as compression from 'compression';
+import { PrismaExceptionFilter } from './app/filters/prisma-exception.filter';
 
 const PATH_KEY = 'PORT';
 export const API_GLOBAL_PREFIX = 'api';
@@ -34,6 +36,7 @@ async function initGlobalConfigs(app: INestApplication) {
       transformOptions: { enableImplicitConversion: true },
     })
   );
+  app.useGlobalFilters(new PrismaExceptionFilter());
   // TODO: Add excludeExtraneousValues after https://github.com/typestack/class-transformer/issues/740 is fixed
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 }
@@ -59,6 +62,7 @@ async function startApp(app: INestApplication) {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.use(helmet());
+  app.use(compression());
 
   await Promise.all([
     initPrisma(app),

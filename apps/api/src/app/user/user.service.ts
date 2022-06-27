@@ -1,9 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { CreateUserDto, FindUserDto, UserDto } from '@nest-commerce/data';
+import {
+  CreateUserDto,
+  DeleteUserDto,
+  FindUserDto,
+  FindUsersResponseDto,
+  UpdateUserDto,
+  UserDto,
+  FindUsersDto,
+} from '@nest-commerce/data';
 import { PasswordService } from '../auth/password/password.service';
-
-const ERRORS_USER_ALREADY_EXIST = 'User already exists.';
 
 @Injectable()
 export class UserService {
@@ -12,6 +18,8 @@ export class UserService {
     private passwordService: PasswordService
   ) {}
 
+  logger = new Logger(UserService.name);
+
   async findUser(findUserDto: FindUserDto): Promise<UserDto | null> {
     const user = await this.prisma.user.findUnique({
       where: findUserDto,
@@ -19,13 +27,26 @@ export class UserService {
     return user ? new UserDto(user) : null;
   }
 
+  async findUsers({
+    page,
+    pageSize,
+    ...findUsersParams
+  }: FindUsersDto): Promise<FindUsersResponseDto> {
+    const [users, count] = await Promise.all([
+      this.prisma.user.findMany({
+        where: findUsersParams,
+        take: pageSize,
+        skip: (page - 1) * pageSize,
+      }),
+      this.prisma.user.count({ where: findUsersParams }),
+    ]);
+    return {
+      users: users.map((user) => new UserDto(user)),
+      count,
+    };
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<UserDto> {
-    const existingUser = await this.findUser({
-      username: createUserDto.username,
-    });
-    if (existingUser) {
-      throw new ConflictException(ERRORS_USER_ALREADY_EXIST);
-    }
     const user = await this.prisma.user.create({
       data: {
         ...createUserDto,
@@ -33,6 +54,23 @@ export class UserService {
       },
     });
     return new UserDto(user);
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UserDto> {
+    const user = await this.prisma.user.update({
+      data: updateUserDto,
+      where: {
+        id,
+      },
+    });
+    return new UserDto(user);
+  }
+
+  async deleteUser(deleteUserDto: DeleteUserDto) {
+    const deletedUser = await this.prisma.user.delete({
+      where: deleteUserDto,
+    });
+    return new UserDto(deletedUser);
   }
 
   async validateUser(

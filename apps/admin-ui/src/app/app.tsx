@@ -1,26 +1,26 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import ProtectedOutlet from './layouts/ProtectedOutlet';
 import UsersDashboard from './pages/UsersDashboard';
 import { Route as RouteEnum } from './configs/routes';
-import { useEffect } from 'react';
-import useThemeChange from './hooks/useThemeChange';
 import { MantineProvider } from '@mantine/core';
+import UserProfile from './pages/UserProfile';
+import { ProtectedOutlet, useDarkMode } from '@nest-commerce/ui';
 
 export function App() {
-  const { theme: colorScheme, setTheme } = useThemeChange();
-
-  useEffect(() => {
-    setTheme('dark');
-  }, [setTheme]);
+  const { isDarkMode } = useDarkMode();
 
   return (
-    <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      theme={{ colorScheme: isDarkMode ? 'dark' : 'light' }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
       <Routes>
         <Route path={RouteEnum.ADMIN}>
-          <Route element={<ProtectedOutlet />}>
-            <Route index element={<Navigate replace to={RouteEnum.Users} />} />
-            <Route path={RouteEnum.Users} element={<UsersDashboard />} />
+          <Route element={<ProtectedOutlet loginRoute={RouteEnum.LOGIN} />}>
+            <Route index element={<Navigate replace to={RouteEnum.USERS} />} />
+            <Route path={RouteEnum.USERS} element={<UsersDashboard />} />
+            <Route path={RouteEnum.USER_PROFILE} element={<UserProfile />} />
           </Route>
           <Route path={RouteEnum.LOGIN} element={<Login />} />
         </Route>

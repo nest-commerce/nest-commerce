@@ -44,7 +44,7 @@ describe('UserController', () => {
     test.each([null, validUser])(
       'should return user if present',
       async (expected) => {
-        userService.findUser.mockResolvedValue(expected);
+        userService.findUser.mockResolvedValueOnce(expected);
         const user = await userController.findUser({ id: 1 });
         expect(user).toBe(expected);
       }
@@ -53,7 +53,7 @@ describe('UserController', () => {
 
   describe('createUser', () => {
     it('should return user on valid request', async () => {
-      userService.createUser.mockResolvedValue(validUser);
+      userService.createUser.mockResolvedValueOnce(validUser);
       const user = await userController.createUser(validUser);
       expect(user).toBe(validUser);
     });

@@ -1,62 +1,37 @@
 import { useForm } from '@mantine/form';
-import {
-  Button,
-  PasswordInput,
-  Group,
-  TextInput,
-  Modal,
-  Alert,
-  Image,
-} from '@mantine/core';
+import { Button, PasswordInput, TextInput, Center } from '@mantine/core';
 import { CredentialsDto } from '@nest-commerce/data';
-import { FormEvent } from 'react';
-import useLogin from '../hooks/data/useLogin';
-import useUser from '../hooks/useUser';
+import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Route } from '../configs/routes';
-import { IconAlertCircle } from '@tabler/icons';
-import useValidate from '../hooks/useValidate';
+import { useValidate, useUser, useLogin, ErrorModal } from '@nest-commerce/ui';
+import SmallLogo from '../components/SmallLogo';
 
 const Login = () => {
-  const { validate } = useValidate(CredentialsDto);
-  const { values, setErrors, getInputProps } = useForm({
+  const { getInputProps, onSubmit } = useForm<CredentialsDto>({
     initialValues: {
       username: '',
       password: '',
     },
+    validate: useValidate(CredentialsDto),
   });
 
   const { mutate, data, error, reset, isLoading } = useLogin();
   const { user, setUser } = useUser();
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    const { errors, hasErrors } = await validate(values);
-    if (hasErrors) {
-      setErrors(errors);
-    } else {
-      mutate(values);
-      setUser(data ?? null);
-    }
-  };
+  useEffect(() => {
+    !isLoading && data && setUser(data);
+  }, [isLoading, data, setUser]);
 
   if (user) {
     return <Navigate to={Route.ADMIN} />;
   }
 
   return (
-    <Group
-      className="justify-center h-full"
-      position="center"
-      direction="column"
-    >
-      <Modal opened={!!error} onClose={reset}>
-        <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
-          {error?.message}
-        </Alert>
-      </Modal>
-      <Image src="assets/icon.svg" alt="logo" />
-      <form onSubmit={handleSubmit}>
+    <Center className="flex-col h-full">
+      <ErrorModal error={error} onClose={reset} />
+      <SmallLogo />
+      <form onSubmit={onSubmit((values) => mutate(values))}>
         <TextInput
           required
           label="Email"
@@ -73,7 +48,7 @@ const Login = () => {
           Login
         </Button>
       </form>
-    </Group>
+    </Center>
   );
 };
 
