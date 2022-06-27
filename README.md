@@ -1,4 +1,4 @@
-<img src="apps/admin-ui/src/assets/icon-large.svg">
+<img src="./nest-commerce-icon.svg" alt="nest commerce logo" width="100%">
 
 # NestCommerce
 
