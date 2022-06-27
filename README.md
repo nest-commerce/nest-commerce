@@ -1,4 +1,4 @@
-
+<img src="apps/admin-ui/src/assets/icon-large.svg">
 
 # NestCommerce
 
