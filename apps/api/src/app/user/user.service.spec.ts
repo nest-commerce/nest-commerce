@@ -4,11 +4,6 @@ import { User, Role } from '@prisma/client';
 import { UserDto } from '@nest-commerce/data';
 import { PasswordService } from '../auth/password/password.service';
 import { PrismaService } from 'nestjs-prisma';
-import {
-  ConflictException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import { UserModule } from './user.module';
 
 describe('UserService', () => {
