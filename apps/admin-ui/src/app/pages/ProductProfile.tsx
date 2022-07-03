@@ -69,6 +69,7 @@ const ProductProfile: FC = () => {
                 data={data}
                 validationClass={UpdateProductDto}
                 onConfirmation={update}
+                modalSize="xl"
               />
               <DeleteButton onConfirm={deleteProduct} />
             </Group>
