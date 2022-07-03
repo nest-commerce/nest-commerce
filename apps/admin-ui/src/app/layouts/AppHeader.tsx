@@ -13,7 +13,7 @@ const AppHeader: FC<AppHeaderProps> = ({ isOpened, setIsOpened }) => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
-    <Header className="flex justify-between items-center" height={70} px="md">
+    <Header className="flex items-center justify-between" height={70} px="md">
       <Group>
         <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
           <Burger
@@ -25,11 +25,12 @@ const AppHeader: FC<AppHeaderProps> = ({ isOpened, setIsOpened }) => {
         <LargeLogo height={100} />
       </Group>
       <Button
-        className="w-8 h-8"
+        className="h-8 w-8"
         p={0}
         onClick={toggleDarkMode}
         color={isDarkMode ? 'yellow' : 'dark'}
         variant="outline"
+        aria-label="toggle dark mode"
       >
         {isDarkMode ? <IconSun /> : <IconMoon />}
       </Button>

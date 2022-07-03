@@ -25,6 +25,7 @@ export const SidebarNav: FC<SidebarNavProps> = ({
       className="flex h-11 w-11 justify-center"
       variant={isActive ? 'light' : 'subtle'}
       onClick={onClick}
+      aria-label={link.title}
     >
       <link.icon />
     </Button>
