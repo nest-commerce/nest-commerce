@@ -1,12 +1,9 @@
 import { UserDto } from './user.dto';
-import { IsInstance, IsInt } from 'class-validator';
+import { IsInstance } from 'class-validator';
 import { ApiProperty } from '../nest-decorators';
+import { FindManyResponseDto } from '../find-many-response.dto';
 
-export class FindUsersResponseDto {
-  @IsInt()
-  @ApiProperty()
-  count: number;
-
+export class FindUsersResponseDto extends FindManyResponseDto {
   @IsInstance(UserDto, {
     each: true,
   })

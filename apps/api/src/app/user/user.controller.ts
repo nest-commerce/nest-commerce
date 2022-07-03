@@ -11,10 +11,11 @@ import {
 import { UserService } from './user.service';
 import {
   CreateUserDto,
-  FindUserDto,
+  UniqueUserDto,
   FindUsersResponseDto,
   UpdateUserDto,
   UserDto,
+  FindUsersDto,
 } from '@nest-commerce/data';
 import {
   ApiConflictResponse,
@@ -23,10 +24,8 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/jwt/jwt.guard';
-import { FindUsersDto } from '@nest-commerce/data';
 import { PermissionsGuard } from '../auth/permissions/permissions.guard';
 import { Permissions } from '../auth/permissions/permissions.decorator';
-import { DeleteUserDto } from '@nest-commerce/data';
 
 @Controller('user')
 export class UserController {
@@ -42,7 +41,7 @@ export class UserController {
       : user.username === query.username
   )
   @Get()
-  async findUser(@Query() findUserDto: FindUserDto): Promise<UserDto | null> {
+  async findUser(@Query() findUserDto: UniqueUserDto): Promise<UserDto | null> {
     return this.userService.findUser(findUserDto);
   }
 
@@ -86,7 +85,7 @@ export class UserController {
   @ApiNotFoundResponse()
   @UseGuards(JwtGuard, PermissionsGuard)
   @Post('delete')
-  async deleteUser(@Body() deleteUserDto: DeleteUserDto): Promise<UserDto> {
-    return this.userService.deleteUser(deleteUserDto);
+  async deleteUser(@Body() dto: UniqueUserDto): Promise<UserDto> {
+    return this.userService.deleteUser(dto);
   }
 }

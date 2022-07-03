@@ -1,4 +1,3 @@
-import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
 import App from './app/app';
@@ -11,12 +10,11 @@ const root = ReactDOM.createRoot(
 
 const queryClient = new QueryClient();
 
+// TODO: Add strict mode back after react-quill adds support for React 18: https://github.com/zenoamaro/react-quill/pull/793
 root.render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </QueryClientProvider>
-  </StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </QueryClientProvider>
 );

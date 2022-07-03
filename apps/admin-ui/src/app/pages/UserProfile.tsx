@@ -1,55 +1,42 @@
 import { FC } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import withDashboardLayout from '../layouts/DashboardLayout';
-import { UpdateUserDto, UserDto } from '@nest-commerce/data';
+import withDashboardLayout from '../layouts/AppLayout';
+import { UniqueUserDto, UpdateUserDto, UserDto } from '@nest-commerce/data';
 import { Avatar, Box, Card, Group, LoadingOverlay, Title } from '@mantine/core';
 import {
-  DataField,
   DeleteButton,
   DisplayTable,
   EditButton,
   ErrorModal,
+  MutationType,
+  QueryKey,
   RoleBadge,
-  useDeleteUser,
-  useGetUser,
-  useUpdateUser,
+  useGetQuery,
+  useMutation,
 } from '@nest-commerce/ui';
 import { Route } from '../configs/routes';
-
-const fields: DataField<UserDto>[] = [
-  { key: 'id', title: 'ID' },
-  {
-    key: 'firstName',
-    title: 'First Name',
-    type: 'text',
-    hidden: true,
-    editable: true,
-  },
-  {
-    key: 'lastName',
-    title: 'Last Name',
-    type: 'text',
-    hidden: true,
-    editable: true,
-  },
-  { key: 'username', title: 'Email / Username', type: 'email', editable: true },
-  { key: 'createdAt', title: 'Joined At', type: 'date' },
-  { key: 'updatedAt', title: 'Last Updated At', type: 'date' },
-];
+import { USER_FIELDS } from '../configs/users';
 
 const UserProfile: FC = () => {
   const { id } = useParams();
-  const { isLoading, data, error, refetch } = useGetUser(id);
+  const { isLoading, data, error, refetch } = useGetQuery<UserDto>(
+    id,
+    QueryKey.USER
+  );
   const {
     mutate,
     error: deleteUserError,
     reset: resetDeleteUser,
-  } = useDeleteUser();
+  } = useMutation<UserDto, UniqueUserDto>(QueryKey.USER, MutationType.DELETE);
   const {
     mutate: updateUser,
     error: updateUserError,
     reset: resetUpdateUser,
-  } = useUpdateUser(id ?? '');
+  } = useMutation<UserDto, UpdateUserDto>(
+    QueryKey.USER,
+    MutationType.UPDATE,
+    id
+  );
   const navigate = useNavigate();
 
   const deleteUser = () => {
@@ -62,13 +49,13 @@ const UserProfile: FC = () => {
   }
 
   return (
-    <Group direction="column" style={{ width: '100%' }}>
+    <Group className="w-full" direction="column">
       <LoadingOverlay visible={!data || isLoading} />
       <ErrorModal error={error} onClose={refetch} />
       <ErrorModal error={deleteUserError} onClose={resetDeleteUser} />
       <ErrorModal error={updateUserError} onClose={resetUpdateUser} />
       {data && (
-        <Card shadow="xl" style={{ width: '100%' }}>
+        <Card className="w-full" shadow="xl">
           <Group spacing="xl" align="start">
             <Box>
               <Avatar radius={128} size={128} />
@@ -80,14 +67,14 @@ const UserProfile: FC = () => {
             <Box className="grow">
               <Group position="right">
                 <EditButton
-                  fields={fields}
+                  fields={USER_FIELDS}
                   data={data}
                   validationClass={UpdateUserDto}
                   onConfirmation={updateUser}
                 />
                 <DeleteButton onConfirm={deleteUser} />
               </Group>
-              <DisplayTable fields={fields} data={data} />
+              <DisplayTable fields={USER_FIELDS} data={data} />
             </Box>
           </Group>
         </Card>

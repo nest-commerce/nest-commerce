@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Permission, PERMISSIONS_DECORATOR_KEY } from './permissions.decorator';
 import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
-import { Request } from '../../types/request';
+import { Request } from '../../types/request.interface';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {

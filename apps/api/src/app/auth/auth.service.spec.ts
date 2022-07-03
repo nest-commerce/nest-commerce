@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { AuthModule } from './auth.module';
 import { UserService } from '../user/user.service';
 import { Role, User } from '@prisma/client';
-import { isJWT } from 'class-validator';
 import { UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -24,10 +23,16 @@ describe('AuthService', () => {
     validateUser: jest.fn(),
   };
 
+  const jwtService = {
+    sign: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule],
+      providers: [UserService, AuthService, JwtService],
     })
+      .overrideProvider(JwtService)
+      .useValue(jwtService)
       .overrideProvider(UserService)
       .useValue(userService)
       .compile();
@@ -47,8 +52,14 @@ describe('AuthService', () => {
 
     it('should return auth result on valid credentials', async () => {
       userService.validateUser.mockResolvedValueOnce(validUser);
+      const expectedToken = 'test';
+      jwtService.sign.mockReturnValue(expectedToken);
       const result = await authService.login(credentials);
-      expect(isJWT(result.accessToken)).toBe(true);
+      expect(result.accessToken).toBe(expectedToken);
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        username: validUser.username,
+        role: validUser.role,
+      });
     });
 
     it('should throw UnauthorizedException on invalid credentials', async () => {

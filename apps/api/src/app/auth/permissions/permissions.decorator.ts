@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { Request } from '../../types/request';
+import { Request } from '../../types/request.interface';
 
 export const PERMISSIONS_DECORATOR_KEY = 'permissions';
 

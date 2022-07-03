@@ -49,7 +49,8 @@ export class PrismaExceptionFilter implements ExceptionFilter {
   }
 
   private getEntityName = (path: string) => {
-    const entityName = path.match(/^\/api\/(\w*)/)[1];
+    const matches = path.match(/^\/api\/(\w*)/);
+    const entityName = matches ? matches[1] : path;
     return capitalize(entityName);
   };
 }

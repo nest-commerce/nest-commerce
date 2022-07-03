@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { API_GLOBAL_PREFIX } from '../main';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ProductModule } from './product/product.module';
+import { SearchModule } from './search/search.module';
 
 const STATIC_ROOT_PATH_KEY = 'SERVE_STATIC_ROOT_PATH';
 
@@ -29,6 +31,8 @@ const STATIC_ROOT_PATH_KEY = 'SERVE_STATIC_ROOT_PATH';
     PrismaModule.forRoot(),
     UserModule,
     AuthModule,
+    ProductModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
-import { UserModule } from './user.module';
 import { UserService } from './user.service';
 import { UserDto } from '@nest-commerce/data';
 import { Role } from '@prisma/client';
@@ -27,7 +26,8 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [UserModule],
+      controllers: [UserController],
+      providers: [UserService],
     })
       .overrideProvider(UserService)
       .useValue(userService)

@@ -58,8 +58,4 @@ export class UserDto implements User {
     format: 'date-time',
   })
   updatedAt: Date;
-
-  constructor(partial: Partial<UserDto>) {
-    Object.assign(this, partial);
-  }
 }

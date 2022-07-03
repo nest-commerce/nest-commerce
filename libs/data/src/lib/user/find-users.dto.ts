@@ -1,8 +1,8 @@
-import { IsInt, IsEmail, IsString, IsOptional, Min } from 'class-validator';
+import { IsInt, IsString, IsOptional } from 'class-validator';
 import { ApiPropertyOptional } from '../nest-decorators';
-import { Type } from 'class-transformer';
+import { FindManyDto } from '../find-many.dto';
 
-export class FindUsersDto {
+export class FindUsersDto extends FindManyDto {
   @IsInt()
   @IsOptional()
   @ApiPropertyOptional({
@@ -20,28 +20,10 @@ export class FindUsersDto {
   @ApiPropertyOptional()
   lastName?: string;
 
-  @IsEmail()
+  @IsString()
   @IsOptional()
   @ApiPropertyOptional({
     format: 'email',
   })
   username?: string;
-
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  @IsOptional()
-  @ApiPropertyOptional({
-    default: 1,
-  })
-  page = 1;
-
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  @IsOptional()
-  @ApiPropertyOptional({
-    default: 10,
-  })
-  pageSize = 10;
 }

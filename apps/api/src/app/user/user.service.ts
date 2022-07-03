@@ -1,47 +1,71 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import {
   CreateUserDto,
-  DeleteUserDto,
-  FindUserDto,
+  UniqueUserDto,
   FindUsersResponseDto,
   UpdateUserDto,
   UserDto,
   FindUsersDto,
 } from '@nest-commerce/data';
 import { PasswordService } from '../auth/password/password.service';
+import { Prisma, User } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: PrismaService,
+    @Inject(forwardRef(() => PasswordService))
     private passwordService: PasswordService
   ) {}
 
   logger = new Logger(UserService.name);
 
-  async findUser(findUserDto: FindUserDto): Promise<UserDto | null> {
+  private toUserDto(user: User | null) {
+    return plainToInstance(UserDto, user);
+  }
+
+  async findUser(findUserDto: UniqueUserDto): Promise<UserDto | null> {
     const user = await this.prisma.user.findUnique({
       where: findUserDto,
     });
-    return user ? new UserDto(user) : null;
+    return this.toUserDto(user);
   }
 
   async findUsers({
     page,
     pageSize,
-    ...findUsersParams
+    id,
+    username,
+    firstName,
+    lastName,
   }: FindUsersDto): Promise<FindUsersResponseDto> {
+    const searchParams: Prisma.UserWhereInput = {
+      id,
+      OR: [
+        {
+          username: { contains: username },
+        },
+        {
+          firstName: { contains: firstName },
+        },
+        {
+          lastName: { contains: lastName },
+        },
+      ],
+    };
+
     const [users, count] = await Promise.all([
       this.prisma.user.findMany({
-        where: findUsersParams,
+        where: searchParams,
         take: pageSize,
         skip: (page - 1) * pageSize,
       }),
-      this.prisma.user.count({ where: findUsersParams }),
+      this.prisma.user.count({ where: searchParams }),
     ]);
     return {
-      users: users.map((user) => new UserDto(user)),
+      users: users.map((user) => this.toUserDto(user)),
       count,
     };
   }
@@ -53,7 +77,7 @@ export class UserService {
         password: await this.passwordService.hash(createUserDto.password),
       },
     });
-    return new UserDto(user);
+    return this.toUserDto(user);
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UserDto> {
@@ -63,23 +87,25 @@ export class UserService {
         id,
       },
     });
-    return new UserDto(user);
+    return this.toUserDto(user);
   }
 
-  async deleteUser(deleteUserDto: DeleteUserDto) {
+  async deleteUser(dto: UniqueUserDto) {
     const deletedUser = await this.prisma.user.delete({
-      where: deleteUserDto,
+      where: dto,
     });
-    return new UserDto(deletedUser);
+    return this.toUserDto(deletedUser);
   }
 
   async validateUser(
     username: string,
     password: string
   ): Promise<UserDto | null> {
-    const user = await this.findUser({ username });
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+    });
     if (user && (await this.passwordService.compare(password, user.password))) {
-      return user;
+      return this.toUserDto(user);
     }
     return null;
   }

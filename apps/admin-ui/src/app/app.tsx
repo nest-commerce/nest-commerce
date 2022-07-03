@@ -5,6 +5,8 @@ import { Route as RouteEnum } from './configs/routes';
 import { MantineProvider } from '@mantine/core';
 import UserProfile from './pages/UserProfile';
 import { ProtectedOutlet, useDarkMode } from '@nest-commerce/ui';
+import ProductsDashboard from './pages/ProductsDashboard';
+import ProductProfile from './pages/ProductProfile';
 
 export function App() {
   const { isDarkMode } = useDarkMode();
@@ -21,6 +23,11 @@ export function App() {
             <Route index element={<Navigate replace to={RouteEnum.USERS} />} />
             <Route path={RouteEnum.USERS} element={<UsersDashboard />} />
             <Route path={RouteEnum.USER_PROFILE} element={<UserProfile />} />
+            <Route path={RouteEnum.PRODUCTS} element={<ProductsDashboard />} />
+            <Route
+              path={RouteEnum.PRODUCT_PROFILE}
+              element={<ProductProfile />}
+            />
           </Route>
           <Route path={RouteEnum.LOGIN} element={<Login />} />
         </Route>

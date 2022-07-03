@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +17,7 @@ export const JWT_EXPIRATION_KEY = 'JWT_EXPIRATION';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private configService: ConfigService
   ) {
@@ -23,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate({ username }: JwtPayload): Promise<UserDto> {
-    const user = this.userService.findUser({
+    const user = await this.userService.findUser({
       username,
     });
     if (!user) {

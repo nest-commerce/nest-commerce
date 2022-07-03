@@ -23,7 +23,7 @@ export const SidebarNav: FC<SidebarNavProps> = ({
   <Tooltip label={link.title} position="right" withArrow transitionDuration={0}>
     <Button
       className="flex h-11 w-11 justify-center"
-      {...(isActive && { variant: 'light' })}
+      variant={isActive ? 'light' : 'subtle'}
       onClick={onClick}
     >
       <link.icon />

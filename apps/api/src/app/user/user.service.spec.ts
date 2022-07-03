@@ -22,6 +22,9 @@ describe('UserService', () => {
     updatedAt: new Date(),
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password, ...userWithoutPassword } = validUser;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [UserModule],
@@ -38,14 +41,14 @@ describe('UserService', () => {
 
   describe('findUser', () => {
     const validSearch = { id: 0 };
-    it('should return user as UserDto', async () => {
+    it('should return user without password as UserDto', async () => {
       prismaService.user.findUnique = jest
         .fn()
         .mockResolvedValueOnce(validUser);
       const returnedUser = await userService.findUser(validSearch);
       expect(returnedUser).not.toBeNull();
       expect(returnedUser).toBeInstanceOf(UserDto);
-      expect(returnedUser).toEqual(validUser);
+      expect(returnedUser).toEqual(userWithoutPassword);
     });
 
     it('should return null if no user is found', async () => {
@@ -64,7 +67,7 @@ describe('UserService', () => {
       const result = await userService.findUsers({ page: 1, pageSize: 1 });
       expect(result.count).toBe(expectedCount);
       expect(result.users[0]).toBeInstanceOf(UserDto);
-      expect(result.users[0]).toEqual(validUser);
+      expect(result.users[0]).toEqual(userWithoutPassword);
     });
 
     it('should return empty array if no users are found', async () => {
@@ -82,11 +85,10 @@ describe('UserService', () => {
       prismaService.user.create = jest
         .fn()
         .mockImplementation(({ data }) => ({ ...validUser, ...data }));
+      const hashSpy = jest.spyOn(passwordService, 'hash');
       const createdUser = await userService.createUser(validUser);
       expect(createdUser).toBeInstanceOf(UserDto);
-      expect(
-        await passwordService.compare(validUser.password, createdUser.password)
-      ).toBe(true);
+      expect(hashSpy).toBeCalled();
     });
   });
 
@@ -94,7 +96,7 @@ describe('UserService', () => {
     it('should return user as UserDto after successful update', async () => {
       prismaService.user.update = jest.fn().mockResolvedValueOnce(validUser);
       const res = await userService.updateUser(1, {});
-      expect(res).toEqual(validUser);
+      expect(res).toEqual(userWithoutPassword);
       expect(res).toBeInstanceOf(UserDto);
     });
   });
@@ -103,7 +105,7 @@ describe('UserService', () => {
     it('should return user as UserDto after successful deletion', async () => {
       prismaService.user.delete = jest.fn().mockResolvedValueOnce(validUser);
       const res = await userService.deleteUser({});
-      expect(res).toEqual(validUser);
+      expect(res).toEqual(userWithoutPassword);
       expect(res).toBeInstanceOf(UserDto);
     });
   });
@@ -124,7 +126,7 @@ describe('UserService', () => {
         .mockResolvedValueOnce(hashedUser);
       expect(
         await userService.validateUser(validUser.username, validUser.password)
-      ).toEqual(hashedUser);
+      ).toEqual(userWithoutPassword);
     });
 
     it('should return null if user not found', async () => {

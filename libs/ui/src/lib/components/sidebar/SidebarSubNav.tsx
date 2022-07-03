@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { TablerIcon } from '@tabler/icons';
-import { Button, Group } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { Link } from 'react-router-dom';
 
 export interface SidebarSubLink {
@@ -19,14 +19,12 @@ export const SidebarSubNav: FC<SidebarSubNavProps> = ({
   isActive,
 }) => (
   <Button
-    className="h-11 w-full"
-    {...(isActive && { variant: 'light' })}
+    className="flex h-11 w-full"
+    variant={isActive ? 'light' : 'subtle'}
     component={Link}
     to={subLink.link}
+    leftIcon={<subLink.icon />}
   >
-    <Group>
-      <subLink.icon />
-      {subLink.title}
-    </Group>
+    {subLink.title}
   </Button>
 );

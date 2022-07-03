@@ -18,7 +18,8 @@
       "@nest-commerce/data": ["libs/data/src/index.ts"],
       "@nest-commerce/ui": ["libs/ui/src/index.ts"]
     },
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "strictNullChecks": true
   },
   "exclude": ["node_modules", "tmp"]
 }
